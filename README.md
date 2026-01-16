@@ -58,3 +58,4 @@ Sistema de agendamento moderno com regra unica de conflito (sem sobreposicao de 
 ## Acesso do barbeiro
 - Configure `BARBER_USER` e `BARBER_PASS` nos secrets do Cloudflare.
 - Apenas o barbeiro logado pode listar, cancelar ou remarcar agendamentos.
+- Painel discreto: acesse `/barbeiro/` para login e gestao.

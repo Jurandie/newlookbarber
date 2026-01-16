@@ -26,6 +26,8 @@ const rescheduleService = document.getElementById('rescheduleService');
 const rescheduleDate = document.getElementById('rescheduleDate');
 const rescheduleTime = document.getElementById('rescheduleTime');
 const closeDialog = document.getElementById('closeDialog');
+const hasBookingForm = Boolean(bookingForm);
+const hasBarberUI = Boolean(loginPanel || barberPanel);
 
 let services = [];
 let rescheduleId = null;
@@ -52,23 +54,25 @@ function setAuthToken(token) {
 }
 
 function setAuthState(isLoggedIn) {
+  if (!loginPanel || !barberPanel || !authBadge) return;
   if (isLoggedIn) {
     loginPanel.classList.add('hidden');
     barberPanel.classList.remove('hidden');
-    summaryPanel.classList.remove('hidden');
+    if (summaryPanel) summaryPanel.classList.remove('hidden');
     authBadge.textContent = 'Conectado';
   } else {
     loginPanel.classList.remove('hidden');
     barberPanel.classList.add('hidden');
-    summaryPanel.classList.add('hidden');
+    if (summaryPanel) summaryPanel.classList.add('hidden');
     authBadge.textContent = 'Desconectado';
-    appointmentsList.innerHTML = '';
-    metricToday.textContent = '--';
-    metricNext.textContent = '--';
+    if (appointmentsList) appointmentsList.innerHTML = '';
+    if (metricToday) metricToday.textContent = '--';
+    if (metricNext) metricNext.textContent = '--';
   }
 }
 
 function showToast(message, type = 'info') {
+  if (!toast) return;
   toast.textContent = message;
   toast.classList.add('show');
   toast.dataset.type = type;
@@ -147,7 +151,7 @@ function isDayOpen(dayOfWeek) {
 }
 
 function updateDateStatus(dateStr) {
-  if (!dateStatus) return true;
+  if (!dateStatus || !dateInput) return true;
   const dayOfWeek = getDayOfWeek(dateStr);
   const isOpen = isDayOpen(dayOfWeek);
   highlightSelectedDay(dayOfWeek);
@@ -171,7 +175,7 @@ function highlightSelectedDay(dayOfWeek) {
   const pills = clientDays.querySelectorAll('.day-pill');
   pills.forEach((pill) => {
     const pillDay = Number(pill.dataset.day);
-    if (pillDay === dayOfWeek) {
+    if (dayOfWeek !== null && pillDay === dayOfWeek) {
       pill.classList.add('selected');
     } else {
       pill.classList.remove('selected');
@@ -180,6 +184,7 @@ function highlightSelectedDay(dayOfWeek) {
 }
 
 function showClosedDayState(dateStr) {
+  if (!timeSelect) return;
   timeSelect.innerHTML = '';
   const option = document.createElement('option');
   option.textContent = 'Dia fechado';
@@ -195,6 +200,7 @@ function showClosedDayState(dateStr) {
 }
 
 function fillServiceSelect(select, items) {
+  if (!select) return;
   select.innerHTML = '';
   items.forEach((service) => {
     const option = document.createElement('option');
@@ -205,6 +211,7 @@ function fillServiceSelect(select, items) {
 }
 
 function fillTimeSelect(slots) {
+  if (!timeSelect) return;
   timeSelect.innerHTML = '';
   if (!slots.length) {
     const option = document.createElement('option');
@@ -250,7 +257,8 @@ async function loadPublicDays() {
     }));
   }
   renderClientDays(publicDays);
-  highlightSelectedDay(getDayOfWeek(dateInput.value));
+  const selectedDay = dateInput ? getDayOfWeek(dateInput.value) : null;
+  highlightSelectedDay(selectedDay);
 }
 
 function renderWorkingDays(days) {
@@ -309,6 +317,7 @@ async function loadServices() {
 }
 
 async function loadAvailability() {
+  if (!dateInput || !timeSelect) return;
   const date = dateInput.value;
   if (!date) return;
 
@@ -318,7 +327,7 @@ async function loadAvailability() {
     return;
   }
 
-  const serviceId = serviceSelect.value;
+  const serviceId = serviceSelect ? serviceSelect.value : '';
   if (!serviceId) {
     fillTimeSelect([]);
     return;
@@ -340,6 +349,7 @@ async function loadAvailability() {
 }
 
 function renderAppointments(date, appointments) {
+  if (!appointmentsList) return;
   appointmentsList.innerHTML = '';
 
   if (!appointments.length) {
@@ -418,11 +428,14 @@ function renderAppointments(date, appointments) {
 
   const scheduled = appointments.filter((appt) => appt.status === 'scheduled');
   const firstScheduled = scheduled[0];
-  metricToday.textContent = String(scheduled.length);
-  metricNext.textContent = nextTime || (firstScheduled ? minutesToTime(firstScheduled.start_minute) : '--');
+  if (metricToday) metricToday.textContent = String(scheduled.length);
+  if (metricNext) {
+    metricNext.textContent = nextTime || (firstScheduled ? minutesToTime(firstScheduled.start_minute) : '--');
+  }
 }
 
 async function loadAgenda() {
+  if (!agendaDateInput) return;
   const date = agendaDateInput.value;
   if (!date) return;
 
@@ -439,6 +452,7 @@ async function loadAgenda() {
 
 async function createAppointment(event) {
   event.preventDefault();
+  if (!serviceSelect || !dateInput || !timeSelect) return;
 
   const payload = {
     client_name: document.getElementById('clientName').value.trim(),
@@ -463,7 +477,7 @@ async function createAppointment(event) {
     dateInput.value = payload.date;
     serviceSelect.value = payload.service_id;
     await loadAvailability();
-    if (authToken) {
+    if (authToken && agendaDateInput) {
       agendaDateInput.value = payload.date;
       await loadAgenda();
     }
@@ -487,6 +501,7 @@ async function cancelAppointment(id) {
 }
 
 function openReschedule(appointment) {
+  if (!rescheduleDialog || !rescheduleService || !rescheduleDate || !rescheduleTime) return;
   rescheduleId = appointment.id;
   rescheduleService.value = String(appointment.service_id || services[0]?.id || '');
   rescheduleDate.value = appointment.date;
@@ -497,6 +512,7 @@ function openReschedule(appointment) {
 async function submitReschedule(event) {
   event.preventDefault();
   if (!rescheduleId) return;
+  if (!rescheduleService || !rescheduleDate || !rescheduleTime) return;
 
   const payload = {
     service_id: Number(rescheduleService.value),
@@ -520,6 +536,7 @@ async function submitReschedule(event) {
 
 async function loginBarber(event) {
   event.preventDefault();
+  if (!barberUser || !barberPass) return;
   const username = barberUser.value.trim();
   const password = barberPass.value;
 
@@ -552,29 +569,53 @@ function logoutBarber() {
   showToast('Sessao encerrada.', 'info');
 }
 
-closeDialog.addEventListener('click', () => rescheduleDialog.close());
-rescheduleForm.addEventListener('submit', submitReschedule);
-bookingForm.addEventListener('submit', createAppointment);
-loginForm.addEventListener('submit', loginBarber);
-logoutButton.addEventListener('click', logoutBarber);
-saveDaysButton.addEventListener('click', saveWorkingDays);
-refreshAgendaButton.addEventListener('click', loadAgenda);
-serviceSelect.addEventListener('change', loadAvailability);
-dateInput.addEventListener('change', loadAvailability);
-agendaDateInput.addEventListener('change', loadAgenda);
+if (closeDialog && rescheduleDialog) {
+  closeDialog.addEventListener('click', () => rescheduleDialog.close());
+}
+if (rescheduleForm) {
+  rescheduleForm.addEventListener('submit', submitReschedule);
+}
+if (bookingForm) {
+  bookingForm.addEventListener('submit', createAppointment);
+}
+if (loginForm) {
+  loginForm.addEventListener('submit', loginBarber);
+}
+if (logoutButton) {
+  logoutButton.addEventListener('click', logoutBarber);
+}
+if (saveDaysButton) {
+  saveDaysButton.addEventListener('click', saveWorkingDays);
+}
+if (refreshAgendaButton) {
+  refreshAgendaButton.addEventListener('click', loadAgenda);
+}
+if (serviceSelect) {
+  serviceSelect.addEventListener('change', loadAvailability);
+}
+if (dateInput) {
+  dateInput.addEventListener('change', loadAvailability);
+}
+if (agendaDateInput) {
+  agendaDateInput.addEventListener('change', loadAgenda);
+}
 
 (async function init() {
   try {
     await loadPublicDays();
     const defaultDate = getNextOpenDate();
-    dateInput.value = formatDate(defaultDate);
-    agendaDateInput.value = formatDate(defaultDate);
+    if (dateInput) dateInput.value = formatDate(defaultDate);
+    if (agendaDateInput) agendaDateInput.value = formatDate(defaultDate);
     await loadServices();
-    await loadAvailability();
-    setAuthState(Boolean(authToken));
-    if (authToken) {
-      await loadWorkingDays();
-      await loadAgenda();
+    if (hasBookingForm) {
+      await loadAvailability();
+    }
+    if (hasBarberUI) {
+      setAuthState(Boolean(authToken));
+      if (authToken) {
+        await loadWorkingDays();
+        await loadAgenda();
+      }
     }
   } catch (error) {
     showToast(error.message, 'error');

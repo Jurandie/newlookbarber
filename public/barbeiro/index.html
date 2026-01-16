@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Neewlook Barber - Painel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="hero">
+        <div class="hero-content">
+          <p class="eyebrow">Neewlook Barber</p>
+          <h1>Painel do barbeiro</h1>
+          <p class="lead">Acesso reservado para gerenciar agenda e dias de trabalho.</p>
+          <a class="barber-back" href="/">Voltar para agendamento</a>
+        </div>
+        <div class="hero-panel hidden" id="summaryPanel">
+          <div class="panel-card">
+            <h3>Resumo rapido</h3>
+            <div class="panel-metrics">
+              <div>
+                <span>Agendamentos hoje</span>
+                <strong id="metricToday">--</strong>
+              </div>
+              <div>
+                <span>Proximo horario</span>
+                <strong id="metricNext">--</strong>
+              </div>
+            </div>
+            <div class="panel-note">
+              Use este painel para bloquear dias e acompanhar o fluxo.
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="card" id="barberCard">
+          <div class="card-header">
+            <h2>Area do barbeiro</h2>
+            <span class="badge" id="authBadge">Desconectado</span>
+          </div>
+          <div id="loginPanel">
+            <form id="loginForm" class="form">
+              <div class="field">
+                <label for="barberUser">Login</label>
+                <input id="barberUser" type="text" placeholder="Seu login" required />
+              </div>
+              <div class="field">
+                <label for="barberPass">Senha</label>
+                <input id="barberPass" type="password" placeholder="Sua senha" required />
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="primary">Entrar</button>
+                <p class="helper">Somente o barbeiro pode visualizar agendamentos.</p>
+              </div>
+            </form>
+          </div>
+          <div id="barberPanel" class="hidden">
+            <div class="schedule-settings">
+              <div class="schedule-header">
+                <h3>Dias de trabalho</h3>
+                <button id="saveDays" type="button" class="primary">Salvar dias</button>
+              </div>
+              <div id="daysGrid" class="days-grid"></div>
+              <p class="helper">Ative os dias em que o barbeiro atende.</p>
+            </div>
+            <div class="controls">
+              <input id="agendaDate" type="date" />
+              <button id="refreshAgenda" type="button" class="ghost">Atualizar</button>
+              <button id="logoutButton" type="button" class="ghost">Sair</button>
+            </div>
+            <ul id="appointmentsList" class="list"></ul>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="rescheduleDialog" class="dialog">
+      <form id="rescheduleForm" class="dialog-body">
+        <div class="dialog-header">
+          <h3>Remarcar atendimento</h3>
+          <button type="button" class="ghost" id="closeDialog">Fechar</button>
+        </div>
+        <div class="field">
+          <label for="rescheduleService">Servico</label>
+          <select id="rescheduleService" required></select>
+        </div>
+        <div class="field">
+          <label for="rescheduleDate">Data</label>
+          <input id="rescheduleDate" type="date" required />
+        </div>
+        <div class="field">
+          <label for="rescheduleTime">Horario</label>
+          <input id="rescheduleTime" type="time" step="900" required />
+        </div>
+        <div class="dialog-actions">
+          <button type="submit" class="primary">Salvar remarcacao</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

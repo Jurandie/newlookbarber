@@ -271,6 +271,28 @@ select:focus {
   color: var(--muted);
 }
 
+.barber-link {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 24px;
+}
+
+.barber-link a,
+.barber-back {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 2px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.barber-link a:hover,
+.barber-back:hover {
+  color: var(--accent-dark);
+  border-color: var(--accent);
+}
+
 .controls {
   display: flex;
   align-items: center;

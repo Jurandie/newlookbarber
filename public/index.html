@@ -90,46 +90,10 @@
             </div>
           </form>
         </section>
-
-        <section class="card" id="barberCard">
-          <div class="card-header">
-            <h2>Area do barbeiro</h2>
-            <span class="badge" id="authBadge">Desconectado</span>
-          </div>
-          <div id="loginPanel">
-            <form id="loginForm" class="form">
-              <div class="field">
-                <label for="barberUser">Login</label>
-                <input id="barberUser" type="text" placeholder="Seu login" required />
-              </div>
-              <div class="field">
-                <label for="barberPass">Senha</label>
-                <input id="barberPass" type="password" placeholder="Sua senha" required />
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="primary">Entrar</button>
-                <p class="helper">Somente o barbeiro pode visualizar agendamentos.</p>
-              </div>
-            </form>
-          </div>
-          <div id="barberPanel" class="hidden">
-            <div class="schedule-settings">
-              <div class="schedule-header">
-                <h3>Dias de trabalho</h3>
-                <button id="saveDays" type="button" class="primary">Salvar dias</button>
-              </div>
-              <div id="daysGrid" class="days-grid"></div>
-              <p class="helper">Ative os dias em que o barbeiro atende.</p>
-            </div>
-            <div class="controls">
-              <input id="agendaDate" type="date" />
-              <button id="refreshAgenda" type="button" class="ghost">Atualizar</button>
-              <button id="logoutButton" type="button" class="ghost">Sair</button>
-            </div>
-            <ul id="appointmentsList" class="list"></ul>
-          </div>
-        </section>
       </main>
+      <div class="barber-link">
+        <a href="/barbeiro/">Acesso do barbeiro</a>
+      </div>
 
       <section class="card highlight">
         <div>
