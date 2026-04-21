@@ -1,26 +1,26 @@
-# Neewlook Barber - Agenda (Cloudflare D1)
+# Neewlook Barber - Scheduling (Cloudflare D1)
 
-Sistema de agendamento moderno com regra unica de conflito (sem sobreposicao de horarios).
+Modern scheduling system with a single conflict rule that prevents overlapping appointments.
 
-## Requisitos
+## Requirements
 - Node 20+
-- Wrangler CLI (`npm install` ja instala)
+- Wrangler CLI (`npm install` already installs it)
 
-## Configurar D1
+## Configure D1
 1. `wrangler d1 create neewlookbarber`
-2. Atualize `database_id` em `wrangler.toml`
+2. Update `database_id` in `wrangler.toml`
 3. `npm run d1:apply`
-4. (Opcional) `npm run d1:local` para usar D1 local
+4. Optional: `npm run d1:local` to use local D1
 
-## Rodar local
+## Run Locally
 - `npm run dev`
 
-## Seguranca e credenciais
-- Defina o login do barbeiro via secrets do Wrangler:
+## Security and Credentials
+- Set the barber login through Wrangler secrets:
   - `wrangler secret put BARBER_USER`
   - `wrangler secret put BARBER_PASS`
-- Para dev local, crie `.dev.vars` com `BARBER_USER` e `BARBER_PASS`.
-- (Opcional) Restrinja CORS com `ALLOWED_ORIGINS` (lista separada por virgula).
+- For local development, create `.dev.vars` with `BARBER_USER` and `BARBER_PASS`.
+- Optional: restrict CORS with `ALLOWED_ORIGINS` as a comma-separated list.
 
 ## Endpoints
 - `GET /api/services`
@@ -34,10 +34,10 @@ Sistema de agendamento moderno com regra unica de conflito (sem sobreposicao de 
 - `GET /api/settings/days`
 - `PATCH /api/settings/days`
 
-## Payload de exemplo
+## Example Payload
 ```json
 {
-  "client_name": "Joao Silva",
+  "client_name": "John Smith",
   "client_phone": "11999990000",
   "date": "2025-01-18",
   "start_time": "10:30",
@@ -45,17 +45,17 @@ Sistema de agendamento moderno com regra unica de conflito (sem sobreposicao de 
 }
 ```
 
-## Regras
-- Funcionamento (padrao inicial): terca a domingo, 09:00-18:00 (segunda fechado)
-- Slots: 15 minutos
-- Duracao: 30 ou 45 minutos, conforme servico
-- Conflito: nao permite sobreposicao
+## Rules
+- Working hours, default setup: Tuesday to Sunday, 09:00-18:00, Monday closed
+- Slots: 15 minutes
+- Duration: 30 or 45 minutes depending on the service
+- Conflict rule: overlapping appointments are not allowed
 
-## Dias de trabalho
-- O barbeiro pode ativar/desativar dias da semana no painel.
-- A API salva os dias em `working_days` e bloqueia agendamentos em dias fechados.
+## Working Days
+- The barber can enable or disable weekdays in the panel.
+- The API stores the configuration in `working_days` and blocks bookings on closed days.
 
-## Acesso do barbeiro
-- Configure `BARBER_USER` e `BARBER_PASS` nos secrets do Cloudflare.
-- Apenas o barbeiro logado pode listar, cancelar ou remarcar agendamentos.
-- Painel discreto: acesse `/barbeiro/` para login e gestao.
+## Barber Access
+- Configure `BARBER_USER` and `BARBER_PASS` in Cloudflare secrets.
+- Only the logged-in barber can list, cancel, or reschedule appointments.
+- Hidden panel: access `/barbeiro/` for login and management.
